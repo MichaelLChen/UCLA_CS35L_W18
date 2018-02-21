@@ -1,0 +1,224 @@
+// Ziheng Xu 704756821
+// Lab1
+// ans1.txt
+
+
+Laboratory: Linux and Emacs scavenger hunt
+
+1. man -k xxxxx
+   Here xxxxx is the specific keyword.
+   For example, we can use "man -k printf" to search, 
+   and get all commands that have keyword 'printf" in their man pages.
+
+2. which cp 
+   which wc
+   These two commands output /usr/local/cs/bin/cp 
+   and /usr/local/cs/bin/wc, respectively.
+
+   whereis cp
+   whereis wc
+   I also used those two commands above and got more output.
+   cp: /usr/bin/cp 
+   /usr/local/cs/bin/cp 
+   /usr/share/man/man1/cp.1.gz 
+   /usr/share/man/man1p/cp.1p.gz
+   wc: /usr/bin/wc 
+   /usr/local/cs/bin/wc 
+   /usr/share/man/man1/wc.1.gz 
+   /usr/share/man/man1p/wc.1p.gz
+
+   In this problem, it's better to use which instead of whereis.
+   which command gives us location of the binary.
+   Besides location of the binary file, 
+   whereis command also gives us locations of the source, 
+   and manual page files.
+
+3. find /usr/bin/ -executable -name ?
+   And the output is 
+   /usr/bin/[
+   /usr/bin/w
+   /usr/bin/X
+   
+   By using man command on all three commands above, 
+   I got following explanations: 
+
+   [ - BASH BUILTIN COMMANDS.
+   w - displays info about current users, and their processes.
+   X - a portable, network-transparent window system.
+   
+   (At first, I got no "No manual entry for X", 
+   but with the help of Piazza and using "whereis X" command, 
+   I found out the problem existed within our linux server, 
+   as there is only the binary for X, but no manual page. )
+
+4. readlink /usr/bin/emacs
+   And the output is /etc/alternatives/emacs.
+   If we "cd /usr/bin", and then "ls -l | grep emacs", 
+   we will be able to see the link "/etc/alternatives/emacs", 
+   which confirms with the answer above.
+
+5. "chmod g+s" sets Group ID,
+	and all new files created within this directory 
+        have their group set to this directory's group.
+
+	"chmod o-x", the execution permission for others is removed.
+	"o" stands for others,
+	and "x" stands for execution.
+
+	These two answers can be found by using "man chmod".
+
+6. find -mtime -21
+   According to man find, we can see the -mtime option is used to get
+   the modification time of the files.
+   And we use 21, because there are 21 segments of 24 hours in 3 weeks.
+
+7. find / -type d -mtime -21
+   By using man find, I found the option -type d, 
+   where d means directory.
+   So the command above finds all directories modified in the last three weeks.
+
+8. whereis find
+   The above command shows me the directroy where "find" is. 
+   And this directory is /usr/bin.
+   
+   cd /usr/bin
+   I use cd command to change into this directory.
+
+   find . -type l | wc
+   There are 246 symbolic links found in this directory. 
+   I started by "man find", and I saw -type l option is for symbolic links.
+   And then I pipe the result into wc, which gives me the word count.
+
+9. cd /usr/lib
+   ls -lat
+   Here I first changed directory into /usr/lib.
+   And then I ls with option -lat.
+   -t helps me sort by modification time, newest first.
+   -a helps me find all files, including those starting with "."
+   And I need to make sure I am looking for a regular file,
+   which starts with a '-' instead of 'd' or 'l'
+
+   So the oldest file is libgpg-error.so.0.10.0.
+
+10. man locale
+   local command gets its data from setting of the environment variables.
+
+   In the manual page of "locale", we can see from 
+   the second paragraph of the description that
+   locale displays the current locale settings 
+   for each locale category (see locale(5)), 
+   based on the settings of the environment variables that 
+   control the locale (see locale(7)).
+   I also tried "localedef --help",
+   but did not find the exact answer.
+
+11. emacs
+	C-h a sort
+	C-x 0
+	I opened an emacs window 
+	and typed C-h a to search the keyword "sort".
+	I changed the window using C-x 0,
+	and then I copied the output and pasted below.
+
+Buffer-menu-sort              M-x ... RET
+   Sort Tabulated List entries by the column at point.
+sort-columns                  M-x ... RET
+   Sort lines in region alphabetically by a certain range of columns.
+sort-fields                   M-x ... RET
+   Sort lines in region lexicographically by the ARGth field of each
+   line.
+sort-lines                    M-x ... RET
+   Sort lines in region alphabetically; argument means descending
+   order.
+sort-numeric-fields           M-x ... RET
+   Sort lines in region numerically by the ARGth field of each line.
+sort-pages                    M-x ... RET
+   Sort pages in region alphabetically; argument means descending
+   order.
+sort-paragraphs               M-x ... RET
+   Sort paragraphs in region alphabetically; argument means descending
+   order.
+sort-regexp-fields            M-x ... RET
+   Sort the text in the region region lexicographically.
+tabulated-list-col-sort       M-x ... RET
+   Sort Tabulated List entries by the column of the mouse click E.
+tabulated-list-sort           M-x ... RET
+   Sort Tabulated List entries by the column at point.
+
+12. e m a c s
+	C-h b
+	C-x 0
+	C-s C - M - a
+	By using the commands above, 
+	I opened a help manual with all the keys translations.
+	After I changed the window,
+	I search for the command "C-M-a",
+	And I got actions for "C-M-a" through "C-M-h" listed as following. 
+
+C-M-a           beginning-of-defun
+C-M-b           backward-sexp
+C-M-c           exit-recursive-edit
+C-M-d           down-list
+C-M-e           end-of-defun
+C-M-f           forward-sexp
+C-M-h           mark-defun
+
+13. e m a c s
+	C-h b
+	C-x 0
+	C-s C - g
+	The first three commands are the same as last problem's.
+	And I use C-s to search for the command "C-g",
+	getting the output bellow.
+
+	C-g             keyboard-quit
+
+	And I moved the cursor to "keyboard-quit" and hit Enter key,
+	getting the explanation below for this "keyboard-quit" action.
+	It basically signal a quit condition.
+
+(keyboard-quit is an interactive compiled Lisp function 
+in 'simple.el'.
+Signal a 'quit' condition.
+During execution of Lisp code, this character causes a quit directly.
+At top-level, as an editor command, this simply beeps.)
+
+14. e m a c s
+	C-h b
+	C-x 0
+	C-s y a n k
+	The first three commands are still the same.
+	And I searched for keyword "yank", getting following result.
+
+	C-y             yank
+
+	And I moved the cursor to "yank" and hit Enter key, 
+	getting the explanation below for this "yank" action.
+	It basically paste the most recent killed text.
+
+(yank is an interactive compiled Lisp function in 'simple.el'.
+Reinsert ("paste") the last stretch of killed text.
+More precisely, reinsert the most recent kill, which is the
+stretch of killed text most recently killed OR yanked.  Put point
+at the end, and set mark at the beginning without activating it.
+With just C-u as argument, put point at beginning, and mark at end.
+With argument N, reinsert the Nth most recent kill.)
+
+15. e m a c s
+	C-h b
+	C-x 0
+	C-s d i r e d
+	The first three commands are still the same.
+	And I searched for keyword "dired", getting following result.
+
+	C-x d           dired
+
+	So I know the Emacs command for dired is C-x d
+	By comparing the result of "ls -l" and "emacs dired",
+	I saw current (.) and parrent (..) directories shown 
+	at the very beginning of dired output,
+	but not in the ls -l one.
+
+
+
+
