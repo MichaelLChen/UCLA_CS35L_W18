@@ -1,0 +1,210 @@
+// ZihengXu 704756821
+// Lab2
+// lab2.log
+
+1. $ locale
+  By using 'locale', I found out I was not
+  in the standard C or POSIX locale.
+   $ export LC_ALL='C'
+  By using the above command, 
+  I set the locale to standard C, and 
+  I checked whether it is successfully set 
+  by using $ locale again.
+
+2. $ sort /usr/share/dict/words > words
+  By using this command, I sorted the contents of 
+  the file called 'words' on SEASnet server and 
+  put the result into 'words' in my working directory, 
+  which is ~/CS35L/lab2.
+
+3. $ wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/assign2.html
+  The wget command helped me get the web page, 
+  and saved it into currently working directory.
+
+4. $ tr -c 'A-Za-z' '[\n*]'< assign2.html
+  This command only outputs all the 
+  English letters in assign2.html, 
+  seperated by multiple new lines.
+
+  -c is complement, and 'A-Za-z' means all the alphabets.
+  So the command above wants to replace all
+  the complement of alphabets (let's say, non-alphabets) 
+  in assign2.html, with newline characters, '[\n*]'.
+
+5. $ tr -cs 'A-Za-z' '[\n*]'< assign2.html
+  This commands outputs only the 
+  English letters in assign2.html,
+  but seperated by only one new line character 
+  between each two English words.
+
+  This command is basically the same as the previous one,
+  except that we have -s option in the second command, 
+  which squeezes the repeats from the non-alphabets input.
+  As a result, there will be only one '[\n*]' printed 
+  at those places where multiple non-alphabets appear.
+
+6. $ tr -cs 'A-Za-z' '[\n*]'< assign2.html | sort
+  This commands outputs only the 
+  English letters in assign2.html,
+  seperated by only one '[\n*]' between each two words.
+  However, the output English words are sorted in alphabetical order.
+
+  When compared to the previous command, 
+  this command takes the output of the first 
+  part of command as the input of the sort command.
+  As a result, the previous output would be sorted and 
+  printed out in alphabetical order. 
+
+7. $ tr -cs 'A-Za-z' '[\n*]'< assign2.html | sort -u
+  This commands outputs only the 
+  English letters in assign2.html,
+  seperated by only one '[\n*]' between each two words.
+  The output English words are sorted in alphabetical order,
+  and there are no repeative English words.
+  All those words appear only once.
+
+  The only difference between this command and the 
+  previous command is the -u option, which means unique.
+  After applying the -u option, the sorted English words 
+  will check itself again for repeats and eliminate those 
+  repetitive items.
+
+8. $ tr -cs 'A-Za-z' '[\n*]'< assign2.html | sort -u | comm - words
+  This commands output three columns.
+  The first column contains all English words unique in 'assign2.html'.
+  The second column contains all words unique in 'words'.
+  And third column contains words that appear in both files.
+
+  When compared to the previous command, 
+  we are using comm command here.
+  By looking up 'man comm', 
+  I found out it compares the content of files.
+  The output of sorted and unique English words in assign2.html
+  is pipelined into the input of the comm command, 
+  being compared with the other file 'words'.
+
+9. $ tr -cs 'A-Za-z' '[\n*]'< assign2.html | sort -u | comm -23 - words
+  This command outputs only the first column, but 
+  suppress the output of column 2 and column 3.
+  The output is the same as 
+  the first column of the previous command's output, 
+  which is those English words unique in 'assign2.html'.
+
+  When compared to the previous command, this one has 
+  the option -2 and -3 here.
+  After looking up in 'man comm', I found out these two 
+  options are used to suppress the output from column 2 
+  and column 3.
+
+10. $ wget http://mauimapp.com/moolelo/hwnwdseng.htm
+  This command helps me get a copy of the web page 
+  that contains a list of English and Hawaiian words.
+
+11. shell script buildwords
+
+#! /bin/bash
+
+#find all Enlish and Hawaiian words
+#-o option prints only the matching part
+grep -o -e '<td>.*</td>'|
+
+#remove html tags that start with < and end with >
+sed 's/<[^>]*>//g'|
+
+#convert all uppercase into lowercase 
+tr "[:upper:]" "[:lower:]"|
+
+#grave accent ` to apostrophe '
+sed -e "s/\`/\'/g" |
+
+#remove lines with no content
+#get rid of those blank lines
+sed '/^$/d' |
+
+#remove English words in odd lines
+#first~step, starting with line first and matching stepth line
+sed -n '0~2p'|
+
+#words seperated by space ,  
+tr '[:space:]' '\n'|
+
+#words seperated by comma ,
+tr ',' '\n'|
+
+#remove the leading '-' 
+sed '/-/d'|
+
+#delete wrong English words
+tr -cs "pk\'mnwlhaeiou[:space:]" "[\n*]"|
+
+#sort the list with -u, the unique option
+sort -u
+
+12. $ chmod u+x buildwords
+  This command makes the shell script executable.
+
+13. $ ./buildwords < hwnwdseng.htm > hwords
+  This command takes the web page as buildwords' input, 
+  and outputs the result into a new file 'hwords'.
+
+14. $ cat assign2.html | tr -cs "pk\'mnwlhaeiou" '[\n*]' | 
+tr '[:upper:]' '[:lower:]'| sort -u | comm -23 - hwords | wc
+  This command takes assign2.html as input 
+  and gets all the Hawaiian word, convert to lowercase, 
+  and sort all the words uniquely.
+  And then the result is compared 
+  with Hawaiian Dictionary call "hwords". 
+  Then I used wc to count the number of words.
+
+  The output is 199 , 198 , 834. 
+  Since we want word count, the result is 198 different words. 
+
+15. cat hwords | tr -cs "pk\'mnwlhaeiou" '[\n*]' | 
+tr '[:upper:]' '[:lower:]'| sort -u | comm -23 - hwords | wc
+  This command checks whether my Hawaiian 
+  spelling checker works. It takes hwords as input 
+  and gets all the Hawaiian word, convert to lowercase, 
+  and sort all the words uniquely.
+  And then the result is compared with Hawaiian Dictionary 
+  call "hwords". Then the wc command outputs: 
+  0       0       0
+  which means the Hawaiian spelling checker works.
+
+
+16. $ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
+tr '[:upper:]' '[:lower:]'| sort -u | comm -23 - words | wc
+  This command takes assign2.html as input 
+  and gets all the English word, convert to lowercase, 
+  and sort all the words uniquely.
+  And then the result is compared with English Dictionary 
+  call "words". 
+  Then I used wc to count the number of words.
+
+  The output is 39 , 38 , 247. 
+  Since we want word count, the result is 38 different words. 
+
+17. $ cat assign2.html | tr -cs "pk\'mnwlhaeiou" '[\n*]' | 
+tr '[:upper:]' '[:lower:]'| sort -u | comm -23 - hwords
+  This command helps me find misspelled Hawaiian words.
+  Some of them are not misspelled in English.
+  For example, 
+  who
+  people
+  own
+  man
+  mail
+  like
+  line
+  link
+
+18. $ cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | 
+tr '[:upper:]' '[:lower:]'| sort -u | comm -23 - words
+  This command helps me find misspelled English words.
+  Some of them are not misspelled in Hawaiian.
+  For example, 
+  halau
+  lau
+  wiki
+
+
+

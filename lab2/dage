@@ -1,0 +1,39 @@
+#! /bin/bash
+
+#usage: ./buildwords EnglishToHawaiian.html > hwords
+
+#find all entries with English or Hawaiian spelling
+grep -o -e '<td>.*</td>'|  
+
+#remove all html tags 
+sed 's/<[^>]*>//g'|
+
+#remove all empty lines 
+sed '/^\s*$/d'|
+
+#remove all the odd number lines(they are English letters)
+sed -n 0~2p|
+
+#transform upper case to lower case 
+tr "[:upper:]" "[:lower:]"|
+
+#transform ` to '
+tr "\`" "\'"|
+
+#all comma into a new line 
+tr ',' '\n'|
+
+#all space by a new line 
+tr '[:space:]' '\n'|
+
+#remove leading space 
+sed 's/^\s*//g'|
+
+#remove -
+sed '/-/d'|
+
+#change misspelled English words 
+tr -cs "pk\'mnwlhaeiou[:space:]" "[\n*]"|
+
+#sort
+sort -u

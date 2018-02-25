@@ -1,0 +1,38 @@
+# ZihengXu 704756821
+# Lab2
+# buildwords
+
+#! /bin/bash
+
+#find all Enlish and Hawaiian words
+grep -o -e '<td>.*</td>'|
+
+#remove html tags that start with < and end with >
+sed 's/<[^>]*>//g'|
+
+#convert all uppercase into lowercase 
+tr "[:upper:]" "[:lower:]"|
+
+#grave accent ` to apostrophe '
+sed -e "s/\`/\'/g" |
+
+#remove lines with no content
+sed '/^$/d' |
+
+#remove English words in odd lines
+sed -n '0~2p'|
+
+#words seperated by space ,  
+tr '[:space:]' '\n'|
+
+#words seperated by comma ,
+tr ',' '\n'|
+
+#remove the leading '-' 
+sed '/-/d'|
+
+#delete wrong English words
+tr -cs "pk\'mnwlhaeiou[:space:]" "[\n*]"|
+
+#sort the list
+sort -u

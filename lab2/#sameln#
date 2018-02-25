@@ -1,0 +1,72 @@
+# ZihengXu 704756821
+# Homework2
+# sameln
+
+#! /bin/sh
+
+#pick a directory
+dir=$1
+ori="$IFS"
+IFS=$'\n'
+
+ls -a -i $dir | sort > inodes.txt
+ls -a $dir | sort > list.txt
+
+count=`cat list.txt | wc -l`
+#echo $count
+
+x=1
+
+until [ $x -gt $count ]
+do
+        f_x=`sed -n "$x"p list.txt`
+        #echo $f_x
+        #let x=x+1
+        if [ -h "$dir/$f_x" -o -d "$dir/$f_x" ]; then
+                sed -i "$x"d list.txt
+                let count=count-1
+        elif [ ! -r "$dir/$f_x" ]; then
+                echo "File $f_x cannot be read."
+                sed -i "$x"d list.txt
+                let count=count-1
+        else
+                let x=x+1
+        fi
+done
+
+grep "^\." list.txt > sort_dot.txt
+grep "^[^\.]" list.txt >> sort_dot.txt
+
+
+let x=1
+until [ $x -gt $count ]
+do
+    f_x=`sed -n "$x"p sort_dot.txt`
+    i_x=`cat inodes.txt | grep " $f_x$" | grep -o "^[0-9]\+"`
+    y=0
+    let y="$x"+1
+    until [ $y -gt $count ]
+    do
+        f_y=`sed -n "$y"p sort_dot.txt`
+        i_y=`cat inodes.txt | grep " $f_y$" | grep -o "^[0-9]\+"`
+        if [ $i_x != $i_y ]; then
+            cmp -s "$dir/$f_x" "$dir/$f_y"
+            if [ $? -eq 0 ]
+            then
+                #echo "hardlink"
+                ln -f "$dir/$f_x" "$dir/$f_y"
+            fi
+        fi
+
+        let y=y+1
+    done
+    let x=x+1
+done
+
+IFS=ori
+
+rm list.txt
+rm inodes.txt
+rm sort_dot.txt
+
+
