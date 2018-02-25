@@ -1,0 +1,12 @@
+47c47
+< Your implementation of comm.py should not import any modules other than argparse, locale, string and the modules that randline.py already imports. Don't forget to change its usage message to accurately describe the modified behavior.
+---
+> Your implementation of comm.py should use only the locale and string modules and the modules that randline.py already uses (it should not import any other modules). Don't forget to change its usage message to accurately describe the modified behavior.
+49c49
+< Port your comm.py implementation to Python 3; among other things, this means you'll need to switch it from the optparse to the argparse module. Make sure that it still works with Python 2.7. Don't rewrite it from scratch; make as few changes as is reasonable.
+---
+> Port your comm.py implementation to Python 3. Make sure that it still works with Python 2. Don't rewrite it from scratch; make as few changes as is reasonable.
+63c63
+< $Id: assign3.html,v 1.23 2015/04/16 06:24:49 eggert Exp eggert $
+---
+> $Id: assign3.html,v 1.23 2015/04/16 06:24:49 eggert Exp $

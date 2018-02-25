@@ -1,0 +1,210 @@
+// ZihengXu 704756821
+// Lab 3
+// lab3.txt
+
+
+1. $ wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+   tar -xzvf coreutils-7.6.tar.gz
+   
+   These two commands above help me download Coreutils 7.6 
+   with the link provided in the spec, 
+   and untar the tar archive file.
+
+2. $ pwd
+   $ mkdir installCoreutils
+   I used the 'print working directory' command 
+   to find out the absolute path 
+   and made a new directory named 'installCoreutils'.
+   
+   $ cd ~/CS35L/lab3/coreutils-7.6
+   I changed directory into the extracted folder.
+
+   $ ./configure --prefix=/u/eng/class/classgxu/CS35L/lab3/installCoreutils
+   I used the above command to configure with path of 
+   the temporary directory I've just created.
+
+   $ make
+   $ make install
+   I used 'make' and 'make install' commands 
+   to compile and install it into my directory.
+
+3. $ cd ../installCoreutils/bin
+   I changed to the bin directory within 
+   the directory of my own copy of Coreutils.
+   In /bin, there are those binary files for 
+   basic commands, like comm, ls, mkdir...
+
+   $ ./ls -l ls
+   I run 'ls' file under ~/CS35L/lab3/installCoreutils/bin 
+   to check on itself, end up with 
+   getting the following output:
+   -rwxr-xr-x 1 classgxu class 457304 Feb  2 23:56 ls
+
+   $ export LC_ALL='en_US.UTF-8'
+   Then I update the locale to reproduce the bug later.
+
+   $ ./ls -l ls
+   I run this command once again under 
+   ~/CS35L/lab3/installCoreutils/bin
+   in order to reproduce the bug. 
+
+   From the following output, we can see that 
+   the date has changed to unwanted YYYY-MM-DD one.
+   -rwxr-xr-x 1 classgxu class 457304 2018-02-02 23:56 ls
+
+4. $ cd ~/CS35L/lab3/coreutils-7.6
+   I first changed directory back to the extracted folder 
+   with the original coreutils.
+
+   $ vim patch
+   In order to solve the problem, 
+   I need to patch the ls command. 
+   So I used vim and copied pasted the code published by Brady.
+   It starts from "--- a/src/ls.c" to the end of the page.
+
+   $ patch -p0 < patch
+   File to patch: ./src/ls.c
+   Then I used the 'patch' command within the same directory 
+   to apply this patch.
+   I specified './src/ls.c' when it gave me a prompt asking 
+   where to apply the patch.
+
+5. $ make
+   And then I recompiled after applying the patch, 
+   so that the ls command in ~/CS35L/lab3/coreutils-7.6/src 
+   is now giving us the traditional Unix date style.
+
+   By running the make command, I got the following output:
+   So the makefile checks all the directory 
+   and looks for changes.
+   After it finds out the change is in /src 
+   due to the patch, it recompiles the ls.o file 
+   because of the change in ls.c
+
+[classgxu@lnxsrv07 ~/CS35L/lab3/coreutils-7.6]$ make
+make  all-recursive
+make[1]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6'
+Making all in lib
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+make  all-recursive
+make[3]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+make[4]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+make[4]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+make[3]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/lib'
+Making all in src
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/src'
+make  all-am
+make[3]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/src'
+  CC     ls.o
+  CCLD   dir
+  CCLD   vdir
+  CCLD   ls
+make[3]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/src'
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/src'
+Making all in doc
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/doc'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/doc'
+Making all in man
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/man'
+  GEN    dir.1
+  GEN    vdir.1
+  GEN    ls.1
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/man'
+Making all in po
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/po'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/po'
+Making all in tests
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/tests'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/tests'
+Making all in gnulib-tests
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make  all-recursive
+make[3]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make[4]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make[4]: Nothing to be done for `all-am'.
+make[4]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make[3]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6/gnulib-tests'
+make[2]: Entering directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6'
+make[1]: Leaving directory 
+`/w/home.08/class/classgxu/CS35L/lab3/coreutils-7.6'
+
+   $ cd src
+   $ ./ls -l ls
+   In order to check whether 'ls' is successfully patched, 
+   I run the above commands and got following output, 
+   which is in correct format:
+   -rwxr-xr-x 1 classgxu class 457128 Feb  3 00:01 ls
+
+6. $ touch -t 197001010000 past
+   $ touch now
+
+   I created two files 'past' and 'now' using touch command.
+   By adding -t option, I changed the date of 'past' to 
+   January the 1st, 1970.
+   And the date of 'now' would simply be 
+   the time I created this file named 'now'.
+
+   So after applying the patch using make command,
+   we have the correct format for the ls command 
+   in coreutils-7.6/src.
+   But since we didn't run 'make install', 
+   the patch has not yet been applied to the one 
+   in installCoreutils/bin.
+
+   As a result, I run the following four commands, 
+   and we can see the difference before and after
+   applying the patch.
+
+   $ ./installCoreutils/bin/ls -l now
+-rw-r--r-- 1 classgxu class 0 2018-02-03 00:26 now
+
+   ./installCoreutils/bin/ls -l past
+-rw-r--r-- 1 classgxu class 0 1970-01-01 00:00 past
+	
+   $ ./coreutils-7.6/src/ls -l now
+-rw-r--r-- 1 classgxu class 0 Feb  3 00:26 now
+
+   $ ./coreutils-7.6/src/ls -l past
+-rw-r--r-- 1 classgxu class 0 Jan  1  1970 past
+
+
+
+
+
+
+
+

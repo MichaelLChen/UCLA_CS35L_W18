@@ -1,0 +1,107 @@
+# ZihengXu 704756821
+# Lab 3
+# comm.py
+
+#!/usr/bin/python
+
+import sys, locale, string
+import argparse
+
+class comm:
+	def __init__(self,filename1, filename2):
+		try:
+			if filename1 == '-':
+				f1 = sys.stdin
+				f2 = open(filename2, 'r')
+			elif filename2 == '-':
+				f2 = sys.stdin
+				f1 = open(filename1, 'r')
+			elif filename1 == '-' and filename2 == '-':
+				print("unable to read")
+				exit()
+			else:
+				f1 = open(filename1, 'r')
+				f2 = open(filename2, 'r')
+			self.lines1 = f1.read().split('\n')
+			self.lines2 = f2.read().split('\n')
+			del self.lines1[len(self.lines1)-1]
+			del self.lines2[len(self.lines2)-1]
+
+			self.list1 = []
+			self.list2 = []
+			self.list3 = []
+			f1.close()
+			f2.close()
+
+		except Exception as e:
+			raise e
+	def unsorted_comparison(self):
+		print("unsorted_comp")
+		return 0
+	def sorted_comparison(self):
+		print("sorted_comp")
+		return 0
+	def printer(self):
+		print("printprint")
+		return 0
+
+
+def main():
+	locale.setlocale(locale.LC_ALL, 'C')
+	usage_msg = """comm.py [OPTION]... FILE1 FILE2
+
+	Output the result after comparing FILE1 and FILE2 line by line."""
+
+	parser = argparse.ArgumentParser(
+									usage=usage_msg)
+	parser.add_argument("-1",
+					action="store_true", dest="alpha", default=0,
+					help="output comparison (default 0)")
+	parser.add_argument("-2",
+					action="store_true", dest="beta", default=0,
+					help="output comparison (default 0)")
+	parser.add_argument("-3",
+					action="store_true", dest="gamma", default=0,
+					help="output comparison (default 0)")
+	parser.add_argument("-u",
+					action="store_true", dest="delta", default=0,
+					help="output comparison (default 0)")
+	#parser.add_argument("file1", help="file1 argument")
+	#parser.add_argument("file2", help="file2 argument")
+	args = parser.parse_args(sys.argv[1:])
+
+        print(args.alpha)
+        print(args.beta)
+        print(args.gamma)
+        print(args.delta)
+        
+	try:
+		alpha = bool(args.alpha)
+		beta = bool(args.beta)
+		gamma = bool(arg.gamma)
+		delta = bool(args.delta)
+                
+	except:
+		parser.error("invalid option: {0}".
+					format(args.alpha))
+
+	input_file_1 = args.file1
+	input_file_2 = args.file2
+
+	try:
+		comparator = compare(input_file_1, input_file_2)
+		if unsort:
+			comparator.unsorted_comparison()
+		else:
+			comparator.sorted_comparison()
+		comparator.printer(alpha, beta, gamma)
+	except IOError as e:
+		errno = e.errno
+		strerror = e.strerror
+		parser.error("I/O error({0}): {1}".
+					  format(errno, strerror))
+
+if __name__ == "__main__":
+	main()
+
+

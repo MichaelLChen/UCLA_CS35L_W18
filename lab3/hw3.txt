@@ -1,0 +1,67 @@
+// ZihengXu 704756821
+// Lab 3
+// hw3.txt
+
+Q1:
+Brady's patch removes "case_long_iso_time_style:" 
+because it is a redundant goto statement 
+which is not going to be called.
+So it might not be totally necessary to do this change 
+since this goto statement won't be called anyway.
+
+Q2:
+The applied patch assumes users already understand 
+the abbreviation of those English words that represent 
+different months and dates. There will be problem if 
+this patched version is used in countries where English 
+is not widely used. Also, it might not be compatible 
+with other programs in which the date format is assumed to 
+be used with the unpatched IOS version. 
+It might also be difficult to debug, 
+since both styles to represent time are valid in meaning.
+
+Q3:
+[classgxu@lnxsrv07 ~/CS35L/lab3]$ python randline.py /dev/null
+Traceback (most recent call last):
+  File "randline.py", line 70, in <module>
+    main()
+  File "randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/local/cs/Python-2.7.14/
+  lib/python2.7/random.py", line 277, in choice
+    return seq[int(self.random() * len(seq))]  
+    # raises IndexError if seq is empty
+IndexError: list index out of range
+
+I ran the randline.py on an empty file. 
+/dev/null is the empty file in this case.
+In randline.py, we read from the input 
+and choose a random line for output.
+Since empty files do not have lines, 
+there would be index error 
+when we are accessing undefined things.
+Also, after looking at the code of randline.py, 
+I only found the following line:
+if numlines < 0:
+		parser.error("negative count: {0}".
+					format(numlines))
+so the error case when number of lines is exactly zero 
+is not handled here.
+
+
+Q4:
+[classgxu@lnxsrv07 ~/CS35L/lab3]$ python3 randline.py /dev/null
+  File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+
+After $ export PATH=/usr/local/cs/bin:$PATH, 
+I am able to run python3 on this seasnet machine.
+It gives me a syntax error.
+So python3 cannot do automatic tuple unpacking like python2.
+As a result, there will be a syntax error here.
+
+
