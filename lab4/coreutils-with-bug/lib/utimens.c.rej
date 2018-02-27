@@ -1,0 +1,18 @@
+--- lib/utimens.c~	2005-11-02 04:16:12.000000000 -0800
++++ lib/utimens.c	2010-01-26 12:20:13.292737899 -0800
+@@ -71,7 +71,7 @@
+    Return 0 on success, -1 (setting errno) on failure.  */
+ 
+ int
+-futimens (int fd ATTRIBUTE_UNUSED,
++coreutils_futimens (int fd ATTRIBUTE_UNUSED,
+ 	  char const *file, struct timespec const timespec[2])
+ {
+   /* There's currently no interface to set file timestamps with
+@@ -160,5 +160,5 @@
+ int
+ utimens (char const *file, struct timespec const timespec[2])
+ {
+-  return futimens (-1, file, timespec);
++  return coreutils_futimens (-1, file, timespec);
+ }

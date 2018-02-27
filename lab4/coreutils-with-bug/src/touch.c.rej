@@ -1,0 +1,11 @@
+--- src/touch.c~	2005-11-02 05:18:47.000000000 -0800
++++ src/touch.c	2010-01-26 12:20:13.172737537 -0800
+@@ -182,7 +182,7 @@
+       t = timespec;
+     }
+ 
+-  ok = (futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
++  ok = (coreutils_futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
+ 
+   if (fd == STDIN_FILENO)
+     {

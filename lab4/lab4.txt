@@ -1,0 +1,275 @@
+// ZihengXu 704756821
+// Lab4
+// lab4.txt
+
+
+1. $ wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/coreutils-with-bug.tar.gz
+   First, I downloaded the coreutils file 
+   on our class website with wget command.
+   $ tar -xzvf coreutils-with-bug.tar.gz
+   Then I untar the compressed file 
+   using -x, -z, -v and -f options
+
+3. $ mkdir installCoreutils
+   $ pwd
+   I made a new directory called 'installCoreutils', 
+   and I printed out the working directory, which is
+   /u/eng/class/classgxu/CS35L/lab4
+
+   $ cd coreutils-with-bug
+   $ ./configure --prefix=/u/eng/class/classgxu/CS35L/lab4/installCoreutils
+   Then I changed directory into 
+   the 'coreutils-with-bug' folder and configured the 
+   path to match the new directory I just created.
+   $ make
+   After successfully configuring the path, 
+   I run the 'make' command to compile everything.
+
+   The 'make' command generates error messages below:
+
+
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens 
+ (int, char const *, struct timespec const [2]);
+     ^
+In file included from utimecmp.h:25:0,from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration of 'futimens' was here
+ extern int futimens 
+ (int __fd, const struct timespec __times[2]) __THROW;
+            ^
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.08/class/classgxu/CS35L/lab4/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.08/class/classgxu/CS35L/lab4/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.08/class/classgxu/CS35L/lab4/coreutils-with-bug'
+make: *** [all] Error 2
+
+
+	From the error messages, we can see that
+	there might be an issue regarding conflicting names.
+	So I downloaded the renaming patch through the link 
+	on class website to solve this problem.
+
+
+4. $ cd coreutils-with-bug
+   $ wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/coreutils.diff
+   $ patch -p0 < coreutils.diff
+   I downloaded the patch into the 'coreutils-with-bug' 
+   directory, and then applied the patch using -p0 option.
+
+   $ make
+   After successfully applying the patch, there is no 
+   longer any error messages this time. 
+   $ make install
+   Then I ran 'make install' to install 
+   it to the directory I had assigned.
+
+5. $ tmp=$(mktemp -d)
+   $ cd $tmp
+   $ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+   $ touch now
+   $ sleep 1
+   $ touch now1
+   $ TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+   
+   I run the command above to reproduce the problem.
+   First, I created a temporary directory and saved it 
+   to a variable called tmp.
+   Then I changed directory into this temporary directory 
+   and created three files with different dates and time.
+   After running the ls command, I got the output below:
+
+-rw-r--r-- 1 classgxu class 0 2018-02-09 05:55:57.099101778 +0000 now1
+-rw-r--r-- 1 classgxu class 0 2018-02-09 05:55:46.908824752 +0000 now
+-rw-r--r-- 1 classgxu class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+   $ TZ=UTC0 ~/CS35L/lab4/installCoreutils/bin/ls -lt --full-time wwi-armistice now now1
+
+   Then I ran the ls command again, but with the one in 
+   the destination of the coreutils I had just installed. 
+   As a result, I got the following output:
+
+-rw-r--r-- 1 classgxu class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classgxu class 0 2018-02-09 05:55:57.099101778 +0000 now1
+-rw-r--r-- 1 classgxu class 0 2018-02-09 05:55:46.908824752 +0000 now
+
+   By comparing the difference between 
+   this one and last one, we can see that 
+   the order of these three dates is wrong 
+   in the second case. 'wwi-armistice' should 
+   be the least recent date (third place here) 
+   instead of being the most recent date. 
+
+
+
+6. $ cd ~/CS35L/lab4/coreutils-with-bug/src
+   $ vim ls.c
+   To find out where the problem is, 
+   I changed directory into the 'src' folder to 
+   see the c code for this ls command.
+
+   $ export PATH=/usr/local/cs/bin:$PATH
+   $ gdb ./ls
+   After looking at the source code, 
+   without finding anything that directly causes 
+   the problem, I then used gdb debugger. Also, 
+   I exported the path to get the correct version of gdb.
+
+   (gdb) info func
+   I used 'info func' under gdb to get all the functions 
+   related to time, which might have caused the problem.
+
+   (gdb) b compare_mtime
+Breakpoint 1 at 0x406533: compare_mtime. (2 locations)
+   After doing a few times by trial and error, 
+   I decided to set a breakpoint on the 
+   function called compare_mtime.
+
+   (gdb) r -lt --full-time /tmp/tmp.V3JuRt3myZ/now /tmp/ 
+   tmp.V3JuRt3myZ/now1 /tmp/tmp.V3JuRt3myZ/wwi-armistice
+   I echoed $tmp before to get the path so that 
+   now I can use gdb to operate on those files 
+   in this temporary directory.
+
+   (gdb) backtrace
+   I used backtrace when the program 
+   had stopped at the breakpoint.
+
+   (gdb) si
+   Then I used 'si' to step into.
+   
+   (gdb) list
+   Everytime I steped into a new line. 
+   I used list to print out the function.
+   As a result, I found the following function 
+   at ../lib/timespec.h:49, 
+   where overflow might happen if a.tv_nsec is small 
+   enough. Instead of getting a negative number as the 
+   result of this substraction, we might get a positive 
+   number due to the wrap around rule of two's complement.
+
+static inline int timespec_cmp (struct timespec a, struct timespec b)
+{
+	int diff = a.tv_sec - b.tv_sec;
+	return diff ? diff : a.tv_nsec - b.tv_nsec;
+}
+
+7. $ cd
+   $ rm -fr $tmp
+   $ cd ~/CS35L/lab4/coreutils-with-bug/lib
+   I quitted gdb, changed into home directory, 
+   removed the temporary directory, and changed 
+   directory into the 'lib' under 'coreutils-with-bug'.
+
+   $ emacs timespec.h
+   M-g g 48
+
+/*
+static inline int
+timespec_cmp (struct timespec a, struct timesp\
+ec b)
+{
+  int diff = a.tv_sec - b.tv_sec;
+  return diff ? diff : a.tv_nsec - b.tv_nsec;
+}
+*/
+
+And I changed the code from the above one 
+into the one below:
+
+/*
+static inline int
+timespec_cmp (struct timespec a, struct timesp\
+ec b)
+{
+  return a.tv_nsec > b.tv_sec ? 1 : (a.tv_nsec\
+ < b.tv_nsec ? -1 : a.tv_nsec -	b.tv_nsec);
+}
+*/
+
+   $ cd ~/CS35L/lab4
+   $ diff -u coreutils-with-bug/lib/timespec.h~ coreutils-with-bug/lib/timespec.h > lab4.diff
+   Then I used the diff command to create the patch.
+   $ emacs
+   C-x 4-a
+   This opens a changeLog file. I add all the information 
+   regarding my patch shown below and then copied pasted 
+   into lab4.diff.
+
+2018-02-10  Ziheng Xu  <classgxu@lnxsrv07.seas\
+.ucla.edu>
+
+        * timespec.h (timespec_cmp): To avoid \
+possible overflow caused by substraction, usin\
+g comparision instead. This method can be used\
+ to sort the correct time order.
+
+8. To check everything is work correctly:
+   $ cd ~/CS35L/lab4/coreutils-with-bug
+   $ patch -p0 < ../lab4.diff
+   $ ./configure --prefix=/u/eng/class/classgxu/CS35L/lab4/install-new
+   $ make
+   $ make install
+
+   I installed the newly-patched one 
+   into the 'install-new' directory.
+
+9. $ tmp=$(mktemp -d)
+   $ cd $tmp
+   $ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+   $ touch now
+   $ sleep 1
+   $ touch now1
+   $ TZ=UTC0 ~/CS35L/lab4/install-new/bin/ls -lt --full-time wwi-armistice now now1
+
+   Then I run those commands again to test out.
+
+-rw-r--r-- 1 classgxu class 0 2018-02-11 04:57:57.579291964 +0000 now1
+-rw-r--r-- 1 classgxu class 0 2018-02-11 04:57:47.054004817 +0000 now
+-rw-r--r-- 1 classgxu class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+	We can see that the patch is working right now.
+	The wwi-armistice is being put to the third place, 
+	with the least recent date.
+
+10. $ cd 
+	$ rm -rf $tmp
+	$ cd ~/CS35L/lab4
+	$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+	$ touch now
+	$ sleep 1
+	$ touch now1
+	$ TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+
+-rw-r--r-- 1 classgxu class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classgxu class 0 2018-02-11 05:03:49.139156000 +0000 now1
+-rw-r--r-- 1 classgxu class 0 2018-02-11 05:03:29.076925000 +0000 now
+
+	As a result, we can see that instead of having 
+	year 1918, it is showing us the year 2054. The reason 
+	why SEASnet system truncates time in the past 
+	and wrap around to a time in the future might be due 
+	to the limits of number of digits used to represent 
+	the date. Also, by trial and error, I found out the 
+	earliest time it can represent correctly is January 
+	the 1st, 1970.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,11 @@
+--- src/copy.c~	2005-09-24 20:07:33.000000000 -0700
++++ src/copy.c	2010-01-26 12:20:13.220735412 -0800
+@@ -420,7 +420,7 @@
+       timespec[0] = get_stat_atime (src_sb);
+       timespec[1] = get_stat_mtime (src_sb);
+ 
+-      if (futimens (dest_desc, dst_name, timespec) != 0)
++      if (coreutils_futimens (dest_desc, dst_name, timespec) != 0)
+ 	{
+ 	  error (0, errno, _("preserving times for %s"), quote (dst_name));
+ 	  if (x->require_preserve)
