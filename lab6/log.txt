@@ -1,0 +1,74 @@
+//ZihengXu 704756821
+//Lab6
+//log.txt
+
+1. $ export PATH=/usr/local/cs/bin:$PATH
+
+2. $ sort --version
+   In the terminal, I can see the version to be 
+   'sort (GNU coreutils) 8.29', which is new-enough.
+
+3. $ od -An -f -N 40000000 < /dev/urandom | 
+tr -s ' ' '\n' > float.txt
+   Since one single-precision floating number takes 
+   4 bytes and we want 10,000,000 of them, so I dumped 
+   40,000,000 bytes using 'od' command into a file 
+   called 'float.txt'
+
+   However, when I used " $ wc -l float.txt ", 
+   it outputs " 10000001 float.txt ".
+   Later, I found out there was an incorrect 
+   newline character at the very beginning of the file, 
+   so I deleted it and used " $ wc -l float.txt " again. 
+   And then it outputs " 10000000 float.txt " correctly.
+
+4. --- Sort directly
+	$ time -p sort -g float.txt > /dev/null
+	real 21.17
+	user 114.45
+	sys 0.45
+   
+   --- 1 thread
+    $ time -p sort -g --parallel=1 float.txt > /dev/null
+    real 108.33
+	user 108.02
+	sys 0.29
+
+   --- 2 threads
+    $ time -p sort -g --parallel=2 float.txt > /dev/null
+    real 58.73
+	user 111.70
+	sys 0.30
+
+   --- 4 threads
+    $ time -p sort -g --parallel=4 float.txt > /dev/null
+    real 33.63
+	user 113.29
+	sys 0.42
+
+   --- 8 threads
+	$ time -p sort -g --parallel=8 float.txt > /dev/null
+	real 21.42
+	user 114.55
+	sys 0.47
+
+
+	From the above output, we can see that the 'real' time 
+	tends to decrease as the number of threads increases. 
+	Also, 'real' time decreases significantly when the 
+	number of threads goes from one to two. At the same 
+	time, when number of threads increases, the 'sys' time 
+	actually goes up, probably because more system calls 
+	are needed, running under multiple threads. And 
+	the 'user' time is pretty stable. Also, the time it 
+	takes in default is very close to the one under 8 
+	threads, so I guess probably the default one runs 
+	with around 8 threads or so.
+
+
+
+
+
+
+
+
