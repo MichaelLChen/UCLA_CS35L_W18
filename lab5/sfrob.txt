@@ -1,0 +1,162 @@
+//ZihengXu 704756821
+//lab5 sfrob.txt
+
+1. Create test files:
+
+$ head --bytes=100000 /dev/urandom > test_100k
+$ head --bytes=1000000 /dev/urandom > test_1m
+$ head --bytes=10000000 /dev/urandom > test_10m
+$ head --bytes=100000000 /dev/urandom > test_100m
+
+2. Using 'time' command to compare the performance:
+
+
+1) test_100k:
+	a) $ time ./sfrob < test_100k > 1a
+real	0m0.011s
+user	0m0.007s
+sys		0m0.000s
+
+	b) $ time ./sfrobu < test_100k > 1b
+real	0m0.186s
+user	0m0.030s
+sys		0m0.152s
+
+	c) $ time ./sfrobs < test_100k > 1c
+real	0m0.010s
+user	0m0.003s
+sys		0m0.006s
+
+	d) $ time ./sfrobu -f < test_100k > 1d
+real	0m0.201s
+user	0m0.021s
+sys		0m0.156s
+
+	e) $ time ./sfrobs -f < test_100k > 1e
+real	0m0.009s
+user	0m0.004s
+sys		0m0.006s
+
+2) test_1m:
+	a) $ time ./sfrob < test_1m > 2a
+real	0m0.071s
+user	0m0.053s
+sys		0m0.003s
+
+	b) $ time ./sfrobu < test_1m > 2b
+real	0m1.808s
+user	0m0.237s
+sys		0m1.553s
+
+	c) $ time ./sfrobs < test_1m > 2c
+real	0m0.027s
+user	0m0.008s
+sys		0m0.011s
+
+	d) $ time ./sfrobu -f < test_1m > 2d
+real	0m1.792s
+user	0m0.250s
+sys		0m1.522s
+
+	e) $ time ./sfrobs -f < test_1m > 2e
+real	0m0.030s
+user	0m0.005s
+sys		0m0.014s
+
+
+3) test_10m:
+	a) $ time ./sfrob < test_10m > 3a
+
+real	0m0.672s
+user	0m0.506s
+sys		0m0.028s
+
+	b) $ time ./sfrobu < test_10m > 3b
+
+real	0m19.566s
+user	0m2.859s
+sys		0m16.563s
+
+
+	c) $ time ./sfrobs < test_10m > 3c
+
+real	0m0.210s
+user	0m0.053s
+sys		0m0.055s
+
+	d) $ time ./sfrobu -f < test_10m > 3d
+
+real	0m19.042s
+user	0m2.995s
+sys		0m15.888s
+
+	e) $ time ./sfrobs -f < test_10m > 3e
+
+real	0m0.224s
+user	0m0.045s
+sys		0m0.052s
+
+
+4) test_100m:
+	a) $ time ./sfrob < test_100m > 4a
+
+real	0m7.669s
+user	0m5.658s
+sys		0m0.276s
+
+	b) $ time ./sfrobu < test_100m > 4b
+
+real	3m7.816s
+user	0m27.608s
+sys		2m38.771s
+
+	c) $ time ./sfrobs < test_100m > 4c
+
+real	0m2.461s
+user	0m0.642s
+sys		0m0.516s
+
+	d) $ time ./sfrobu -f < test_100m > 4d
+
+real	3m13.302s
+user	0m28.904s
+sys		2m42.792s
+
+	e) $ time ./sfrobs -f < test_100m > 4e
+
+real	0m1.700s
+user	0m0.629s
+sys		0m0.524s
+
+
+
+From the result above, we can see that:
+The unbuffered ones are usually far much slower than 
+those buffered ones, since the unbuffered one takes 
+large amount of time transfering between user mode 
+and kernel mode.
+
+Among all three methods, 
+the shell script one is the fastest, since it 
+has been written and tested very well already so that 
+it is used as the default method on linux system. The 
+shell script method outruns both sfrobu and sfrob, 
+especially when the input file is very large.
+
+Also, for the number of comparisons:
+when input is 100k (36 lines), 
+number of comparisons is 2946.
+when input is 1m (3844 lines), 
+number of comparisons is 42334.
+when input is 10m (39051 lines), 
+number of comparisons is 545911.
+when input is 100m (389912 lines), 
+number of comparisons is 6777202.
+By doing linear regression, the number of comparisons
+as a function of input is y = 17.49x - 50403.
+The R square is 0.9997, which means it is 
+a pretty good fit. 
+
+
+
+

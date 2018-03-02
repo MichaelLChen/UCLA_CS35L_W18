@@ -1,0 +1,163 @@
+// ZihengXu 704756821
+// Lab 5
+// lab.txt
+
+1. tr2u.c (unbuffered) uses "read" and "write", 
+while tr2b.c (buffered) uses "getchar" and "putchar".
+
+
+2. After finishing writing both c files, 
+I compiled them with gcc, and -o option as following:
+
+$ gcc -o tr2u tr2u.c
+$ gcc -o tr2b tr2b.c
+
+
+3. And then I use the command below 
+to generate a test file with 5,000,000 bytes.
+
+$ head --bytes=5000000 /dev/urandom > test.txt
+
+After that, I used the 'strace' command 
+to compare the system calls issued by the 
+tr2b and tr2u commands. The result is shown below:
+
+a) when copying one file to another:
+
+ a1) $ strace -c ./tr2b 'a' 'b' < test.txt > a1
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- 
+ 84.26    0.000091          23         4           fstat
+ 12.04    0.000013          13         1           write
+  3.70    0.000004           0         9           mmap
+  0.00    0.000000           0         2           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4          mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1        arch_prctl
+------ ----------- ----------- --------- --------- 
+100.00    0.000108                    29         1 total
+
+
+ a2) $ strace -c ./tr2u 'a' 'b' < test.txt > a2
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- 
+ 55.12   21.254604           4   5000000           write
+ 44.88   17.308704           3   5000002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4          mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1        arch_prctl
+------ ----------- ----------- --------- --------- 
+100.00   38.563308              10000024         1 total
+
+
+
+b) Copying a file to the terminal:
+ 
+ b1) $ strace -c ./tr2b 'a' 'b' < test.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- 
+ 25.56    0.000046           5         9           mmap
+ 18.33    0.000033           8         4          mprotect
+ 17.78    0.000032          16         2           open
+  8.89    0.000016          16         1        arch_prctl
+  8.33    0.000015           8         2           read
+  8.33    0.000015           4         4           fstat
+  6.67    0.000012          12         1           munmap
+  3.89    0.000007           7         1           write
+  2.22    0.000004           2         2           close
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+------ ----------- ----------- --------- --------- 
+100.00    0.000180                    29         1 total
+
+
+
+ b2) $ strace -c ./tr2u 'a' 'b' < test.txt
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- 
+ 54.58   21.955780           4   5000000           write
+ 45.42   18.269984           4   5000002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4          mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1        arch_prctl
+------ ----------- ----------- --------- --------- 
+100.00   40.225764              10000024         1 total
+
+
+
+From the above result, we can see that:
+
+No matter it is copying one file to another in case (a), 
+or copying a file to the terminal in case (b),
+the buffered method is always significantly faster than 
+the unbuffered one. This might be the result of using 
+extra syscalls during the time we 'read' and 'write'.
+Instead, the buffered one uses the buffer to store those 
+temporary data in order to reduce syscalls.
+
+Also, the program tends to get slower and use more 
+syscalls when we copy a file to the terminal in case b 
+than the one we copy one file to another in case a.
+This might be the result of extra syscalls when we want 
+to directly output the result in the terminal.
+
+4. Then, I used the 'time' command testing on same 
+amount of data to see how much faster one program outruns 
+the other one.
+
+a) when copying one file to another:
+
+ a1) $ time ./tr2b 'a' 'b' < test.txt > a1
+
+real	0m0.003s
+user	0m0.001s
+sys		0m0.000s
+
+
+ a2) $ time ./tr2u 'a' 'b' < test.txt > a2
+
+real	0m8.672s
+user	0m1.208s
+sys		0m7.396s
+
+
+b) Copying a file to the terminal:
+
+ b1) $ time ./tr2b 'a' 'b' < test.txt
+
+real	0m0.002s
+user	0m0.000s
+sys		0m0.001s
+
+ b2) $ time ./tr2u 'a' 'b' < test.txt
+
+real	0m8.858s
+user	0m1.320s
+sys		0m7.525s
+
+
+From the time result above:
+we can see that the buffered one is significantly 
+faster than the unbuffered one. And the one where we 
+copy one file to another is slightly faster than the one 
+where we copy file directly to the terminal.
