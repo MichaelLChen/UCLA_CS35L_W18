@@ -1,0 +1,146 @@
+//ZihengXu 704756821
+//lab7
+//log.txt
+//partner: JianzhiLiu 204742214
+
+1. First, I set up the beagle bone and 
+connected it to 'UCLA_WEB_RES' wifi.
+I tried 'wget' the assign7 spec page 
+to test if the wifi is indeed connected.
+
+2. ~# dpkg --get-selections | grep openssh
+
+And then I used the above command to see 
+if this board has openssh-server and 
+openssh-client installed. 
+Later, I found out even if it does have both 
+of them installed already, they might not be updated to 
+the newest version. So, I still need to run these 
+two commands below:
+
+ sudo apt-get install openssh-server
+ sudo apt-get install openssh-client
+
+3. I used the following command to generate 
+a public and private key and saved them to 
+the default address '/root/.ssh/id_rsa'
+
+root@beaglebone:~# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+/root/.ssh/id_rsa already exists.
+Overwrite (y/n)? y
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+76:01:73:4b:b3:62:c6:aa:f2:1a:0f:e6:33:9d:86:db 
+root@beaglebone
+The key's randomart image is:
++---[RSA 2048]----+
+|        o +      |
+|       . = +     |
+|        = +      |
+|       + . .     |
+|      . S .      |
+|     . . .       |
+|  =o..           |
+| o+B+            |
+|  +*E            |
++-----------------+
+
+4. Next, I created account and added this as a new 
+user for my lab partner ryan (Jianzhi).
+   I created .ssh directory for this new user, 
+   and I changed permission and ownership on .ssh
+
+root@beaglebone:~# sudo useradd -d /home/ryan01 -m ryan01
+root@beaglebone:~# sudo passwd ryan01
+root@beaglebone:~# sudo mkdir /home/ryan01/.ssh
+root@beaglebone:~# cd /home/ryan01
+root@beaglebone:/home/ryan01# sudo chown -R ryan01 .ssh
+root@beaglebone:/home/ryan01# sudo chmod 700 .ssh
+
+   After this, I need to install emacs and change a line 
+   in 'sshd_config' in order to disable password-based 
+   authentication.
+
+root@beaglebone:/home/ryan01# sudo apt-get install emacs
+root@beaglebone:/home/ryan01# sudo emacs /etc/ssh/ 
+sshd_config
+
+	I changed the following part in the file to 'no'.
+
+# Change to no to disable tunnelled clear text p\
+asswords
+#PasswordAuthentication no
+
+
+5. I ran the 'ifconfig' command to find out my ip address.
+root@beaglebone:/home/ryan01# ifconfig
+As a result, I found out my ip address is 172.20.10.2, 
+and my partner's address is 172.20.10.3
+
+6. After my partner connected onto my board as a client. 
+We switched and he set up his as a server. 
+This time I was the client.
+
+First, I generate public and private key and saved it to 
+default location /root/.ssh/id_rsa.
+root@beaglebone:~# ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa): 
+/root/.ssh/id_rsa already exists.
+Overwrite (y/n)? y
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+ef:87:db:14:ea:5a:55:d0:14:4c:da:66:fe:18:b2:d7 root@beaglebone
+The key's randomart image is:
++---[RSA 2048]----+
+|            .=+. |
+|             +o  |
+|            . =  |
+|             =   |
+|        S   + o  |
+|         . o + = |
+|          +.o o E|
+|         +.o..   |
+|        ..+o.    |
++-----------------+
+
+7. After this, I copied my public key onto his server 
+for key-based authentication. And I also added the 
+private key to the authentication to the agent.
+
+root@beaglebone:~# ssh-copy-id -i law@172.20.10.3
+root@beaglebone:~# ssh-add
+root@beaglebone:~# ssh-agent
+
+   I used the following 'ssh' command to gain access.
+
+root@beaglebone:~# ssh law@172.20.10.3
+law@172.20.10.3's password: 
+$ ls
+$ touch hahahawohaha 
+$ ls
+hahahawohaha  lawrence
+
+  As shown above, I created a file as the client. 
+  And my partner created a file as the root account.
+  Both of us would be able to see it if we use 'ls'.
+  Then we wanted to test out X11 session forwarding.
+
+root@beaglebone:~# ssh -X law@172.20.10.3
+law@172.20.10.3's password: 
+Last login: Sat Mar  3 21:34:15 2018 from 172.20.10.2
+$ xterm
+$ firefox
+
+  Both of them runs so we can conclude that we were 
+  able to run programs on the remote host servers 
+  created by ryan and me on our beagle bones.
+

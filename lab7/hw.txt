@@ -1,0 +1,45 @@
+//ZihengXu 704756821
+//lab7
+//hw.txt
+
+1. Yes, the resulting network should still be secure. 
+Even if they have been observing all the bytes going 
+across the network, they would still not able to get 
+the private key, since the private key would only 
+be on the local computer instead of being available 
+across the network. Only when they have the private 
+key can they decode those bytes across the network. 
+They would not be able to find out our private key 
+even if they have already found out the public key.
+
+1) For the same reason, even if the keyboard is tapped, 
+the network is still secure since they would still not be 
+able to figure out our private key. After they record our 
+keystrokes, they would be able to see what our usernames 
+and passphrase are, but not the private keys. The private 
+keys are generated randomly even if we keep using 
+the same passphrase.
+
+2) However, if we were booting off USB and the other team 
+somehow managed to gain access to the USB drive. The 
+netork might not be secure this time. They could get to 
+all the public and private keys, which would help them 
+to decode the message from us between the server and 
+the client.
+
+
+2. gpg --verify does not verify who the creator is. 
+However, it does verify if the public key matches the 
+signature after the file gets translated using this key.
+But if someone extracts the file and tars it again, also 
+changes the public key, then he would be able to generate 
+his signature and verified by 'gpg --verify'.
+
+   In order to fix this problem, we can rely on 
+applications that are provided by third-party companies, 
+such as 'Certificate Authority'. They can used to verify 
+identities and keep track of the origin authors.
+
+
+
+
