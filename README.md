@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## UCLA CS 35L, Winter 2018. Software Construction Laboratory
 
 You can use the [editor on GitHub](https://github.com/LawrenceXu13467/UCLA_CS35L_W18/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
