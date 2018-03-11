@@ -2,8 +2,7 @@
 ## Software Construction Laboratory
 
 
-https://lawrencexu13467.github.io/UCLA_CS35L_W18/
-
+[Click here to view this page](https://lawrencexu13467.github.io/UCLA_CS35L_W18/)    
 ## Assignments
 ```
 Lab1 Getting to know your system
