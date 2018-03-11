@@ -15,7 +15,6 @@ Lab7 SSH setup and use in applications
 Lab8 Dynamic linking
 Lab9 Change management
 Lab10 Research and development in computing 
-
 ```
 
 ## Scores
@@ -24,4 +23,3 @@ Lab10 Research and development in computing
 2. 96/100
   
 ```
-
