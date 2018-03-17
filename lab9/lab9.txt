@@ -1,0 +1,192 @@
+//Ziheng Xu 704756821
+//Lab9
+//lab9.txt
+
+1. $ git clone ~eggert/src/gnu/diffutils
+First, I cloned the Diffutils repository from the server.
+
+2. $ cd diffutils
+   $ git log > git-log.txt
+Then I changed directory into the repository I just cloned.
+And I created 'git-log.txt' to save the log of changes 
+within the master branch of Diffuitls.
+
+3. $ git tag > git-tags.txt
+Then I created 'git-tags.txt' to generate a list of tags.
+
+4. $ emacs git-log.txt
+   C-s 
+   maint: quote 'like this' or "like this", not `like this'
+   
+   So I used emacs to view 'git-log.txt', 
+   and searched for the commit with key words above.
+
+$ git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt
+
+5. $ git checkout v3.0 -b ziheng3.0
+   I checked out version 3.0.
+   And then I created and switched to new branch.
+
+6. $ patch -p1 < quote-patch.txt
+   Then I applied the patch from quote-patch.txt.
+    
+    We can see that there are a few hunks failed during 
+    patching, as noted below:
+
+	README Failed at 9 & 60
+	REANDME-hacking Failed at 19
+	cfg.mk Failed at 29
+	cmp.c Failed at 876, 906 & 942
+	diff3.c Failed at 433
+
+7. $ git status
+   I used 'git status' for an overview of what happened.
+   The output is shown below.
+
+# On branch ziheng3.0
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be 
+committed)
+#   (use "git checkout -- <file>..." to discard changes 
+in working directory)
+#
+#	modified:   NEWS
+#	modified:   README
+#	modified:   TODO
+#	modified:   doc/diagmeet.note
+#	modified:   ms/config.bat
+#	modified:   ms/config.site
+#	modified:   po/en.po
+#	modified:   src/analyze.c
+#	modified:   src/cmp.c
+#	modified:   src/context.c
+#	modified:   src/diff.c
+#	modified:   src/diff.h
+#	modified:   src/diff3.c
+#	modified:   src/dir.c
+#	modified:   src/ifdef.c
+#	modified:   src/io.c
+#	modified:   src/sdiff.c
+#	modified:   src/side.c
+#	modified:   src/system.h
+#	modified:   src/util.c
+#	modified:   tests/help-version
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be 
+committed)
+#
+#	NEWS.orig
+#	README-hacking.orig
+#	README-hacking.rej
+#	README.orig
+#	README.rej
+#	cfg.mk.orig
+#	cfg.mk.rej
+#	git-log.txt
+#	git-tags.txt
+#	ms/config.site.orig
+#	quote-patch.txt
+#	src/cmp.c.orig
+#	src/context.c.orig
+#	src/diff.c.orig
+#	src/diff.c.rej
+#	src/diff.h.orig
+#	src/diff3.c.orig
+#	src/diff3.c.rej
+#	src/dir.c.orig
+#	src/sdiff.c.orig
+#	src/system.h.orig
+#	src/util.c.orig
+#	tests/help-version.orig
+no changes added to commit (use "git add" and/or "git 
+commit -a")
+
+8. By using Emacs functions like 'vc-revert', I would be 
+able to undo or revert the changes made to previous 
+versions that we start from.
+
+9. I listed all modified files that are not c files below:
+
+NEWS
+README
+TODO
+doc/diagmeet.note
+ms/config.bat
+ms/config.site
+po/en.po
+src/diff.h
+src/system.h
+tests/help-version
+
+There are 10 of them and I opened them one by one using 
+emacs, and then I used vc-revert (C-x v u) to discard the 
+changes.
+
+   Below are all the c files.
+
+src/analyze.c
+src/cmp.c
+src/context.c
+src/diff.c
+src/diff3.c
+src/dir.c
+src/ifdef.c
+src/io.c
+src/sdiff.c
+src/side.c
+src/util.c
+
+There are 11 of them and I opened them one by one using 
+emacs, and then I used vc-diff (C-x v =) to see the 
+changes. We want to undo all the change made in constant 
+C strings (comments part) by using diff-apply-hunk (C-c 
+C-a).
+
+10. $ cat src/*.c.rej
+	And I found out there are rejected patches, 
+	probably because line number does not match, 
+	or no exact string match exists in diff.c or diff3.c.
+	So I have to manually apply the change.
+
+11. $ git clean -f
+	I removed all untracked files using above command.
+	And I run 'git status' to check again if it works.
+
+12. $ git diff > quote-3.0-patch.txt
+	It gives 326 lines of output, which looks pretty good 
+	to me.
+
+13. $ wget http://web.cs.ucla.edu/classes/winter18/cs35L/assign/diffutils-gets.
+
+	$ ./bootstrap
+	$ patch -p0 <diffutils-gets.diff
+	$ ./configure
+	$ make
+
+	After that, I need to check if 
+	it is built successfully.
+
+	$ ./src/diff . -
+	$ ./src/diff --
+
+	Both of them output correct format, 
+	using apostrophe ' instead of grave accent `
+
+14. $ cd ..
+	$ mkdir diffutils-3.0-patch
+	$ mkdir diffutils-3.0
+	$ git clone ~eggert/src/gnu/diffutils clone_orig
+	$ cd clone_orig
+	$ git checkout v3.0 -b orig
+	$ cp ./src/*.c ../diffutils-3.0/
+	$ cd ..
+	$ cp ./diffutils/src/*.c ./diffutils-3.0-patch/
+	$ ./diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch >quote-3.0-test.txt
+	
+15.	$ diff -u quote-3.0-test.txt diffutils/quote-3.0-patch.txt
+	As we can see, there are some differences. 
+	However, those differences are due to different 
+	paths and the wrong order of diff.c and diff3.c.
+	Besides those problems, the content of two files 
+	is consistent.

@@ -1,0 +1,135 @@
+//Ziheng Xu 704756821
+//Lab9
+//lab9.txt
+
+2. $ cd diffutils
+   $ git checkout v3.0 -b quote
+   I checked out version 3.0, 
+   and then switched into new branch 'quote'.
+
+3.
+[classgxu@lnxsrv07 ~/CS35L/lab9/submit/diffutils]
+$ patch -p1 < quote-3.0-patch.txt
+patching file src/cmp.c
+patching file src/diff.c
+patching file src/diff3.c
+patching file src/dir.c
+patching file src/sdiff.c
+patching file src/util.c
+
+I applied my copy of patch onto the new branch.
+
+4.
+5. $ emacs quote-3.0-patch.txt
+   C-x 4 a
+
+   And then I used the emacs function to add ChangeLog 
+   onto all the files with proper comments.
+
+
+2018-03-16  Ziheng Xu  <classgxu@lnxsrv07.seas.ucla.edu>
+
+        * src/util.c: changed src/util.c to replace grave accent ` by apostrophe '
+
+        * src/sdiff.c: changed src/sdiff.c to replace grave accent ` by apostrophe '
+
+        * src/dir.c: changed src/dir.c to replace grave accent ` by apostrophe '
+
+        * src/diff3.c: changed src/diff3.c to replace grave accent ` by apostrophe '
+
+        * src/diff.c: changed src/diff.c to replace grave accent ` by apostrophe '
+
+        * src/cmp.c: changed src/cmp.c to replace grave accent ` by apostrophe '
+
+        * quote-3.0-patch.txt: this patch changes grave accent ` to apostrophe '
+
+
+6. $ git add .
+   $ git commit -F ChangeLog
+
+I commit the change to a new branch, and use 
+the ChangeLog as commit messages. The output is 
+shown below.
+
+[quote b07cac5] 2018-03-16  Ziheng Xu  <classgxu@lnxsrv07.seas.ucla.edu>
+ Committer: Ziheng Xu <classgxu@lnxsrv07.seas.ucla.edu>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 7 files changed, 369 insertions(+), 43 deletions(-)
+ create mode 100644 quote-3.0-patch.txt
+
+
+
+7. $ git format-patch -1 --stdout > formatted-patch.txt
+	With the above command, I generate a formatted patch.	
+8. $ git checkout v3.0 -b partner
+   $ git am formatted-patch-jl.txt
+
+	My partner is Jianzhi Liu from Lab 8.
+	First, I created a new temporary 
+	branch 'partner' for him.
+
+	After 'git am', I got a lot of warnings.
+
+Applying: 2018-03-16 Jianzhi Liu <classkaj@lnxsrv07.seas.ucla.edu>
+/u/eng/class/classgxu/CS35L/lab9/submit/diffutils/.git/rebase-apply/patch:30: trailing whitespace.
+ 
+/u/eng/class/classgxu/CS35L/lab9/submit/diffutils/.git/rebase-apply/patch:33: space before tab in indent.
+ 	 || (e == LONGINT_INVALID_SUFFIX_CHAR && **argptr == delimiter))
+/u/eng/class/classgxu/CS35L/lab9/submit/diffutils/.git/rebase-apply/patch:41: space before tab in indent.
+ 	  _("SKIP values may be followed by the following multiplicative suffixes:\n\
+/u/eng/class/classgxu/CS35L/lab9/submit/diffutils/.git/rebase-apply/patch:46: space before tab in indent.
+ 	  _("Exit status is 0 if inputs are the same, 1 if different, 2 if trouble."));
+/u/eng/class/classgxu/CS35L/lab9/submit/diffutils/.git/rebase-apply/patch:50: space before tab in indent.
+ 	{
+warning: squelched 72 whitespace errors
+warning: 77 lines add whitespace errors.
+
+	So I repeat step 13 in lab part.
+	$ ./bootstrap
+	$ patch -p0 <diffutils-gets.diff
+	$ ./configure
+	$ make
+
+	After that, I checked if 
+	it was built successfully.
+
+	$ ./src/diff . -
+	$ ./src/diff --
+
+	Both of them output correct format, 
+	using apostrophe ' instead of grave accent `
+
+	$ make check
+	It works perfectly.
+
+9. $ make distdir
+	I typed in this command on Jianzhi's laptop.
+	This creates a directory 'diffutils-3.0.1-d083', 
+	and it contains the ChangeLog of my patch. 
+	He also generated my ChangeLog on his machine.
+	So, we verified our ChangeLog entries work perfectly.
+
+10. $ exit
+	$ ssh -X classgxu@lnxsrv07.seas.ucla.edu
+	$ git clone ~eggert/src/gnu/emacs
+	$ cd emacs
+	$ gitk
+
+	Then I found the newest merge on 01/25/2015, 
+	and took a screenshot.
+
+
+
+
+
+

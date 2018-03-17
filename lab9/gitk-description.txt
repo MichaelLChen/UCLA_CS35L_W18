@@ -1,0 +1,25 @@
+//ZihengXu 704756821
+//lab9
+//gitk-description.txt
+
+A description for gitk's subwindow
+
+	Top left corner shows all the commits from different 
+	branches and what each commit does as well.
+	This section also shows the relationship between 
+	branches.
+	Below it, there is the SHA1 ID of each commit selected.
+
+
+	In the middle, we have the name and email address 
+	from the authors who has made the commits to the left.
+
+	To the right, we have date and time of the commits.
+
+	Bottom left corner shows the ChangeLog of the commit. 
+	It is in 'Diff' option by default.
+	And we can use tools like 'Search' there.
+
+	Bottom right corner shows the name of files that are 
+	related to this selected commit.
+
