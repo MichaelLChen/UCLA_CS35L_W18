@@ -19,5 +19,7 @@ Lab.10     Research and development in computing
 ```
 1. 98/100
 2. 96/100  
+6. 100/100   
+10. 99/100   
 ```
 [https://lawrencexu13467.github.io/UCLA_CS35L_W18/](https://lawrencexu13467.github.io/UCLA_CS35L_W18/)   
