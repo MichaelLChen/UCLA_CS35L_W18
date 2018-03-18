@@ -3,7 +3,7 @@
  
 ## Assignments
 ```
-Lab.1      Getting to know your system
+Lab.1      [Getting to know your system](http://web.cs.ucla.edu/classes/winter18/cs35L/assign/assign9.html)
 Lab.2      Shell scripting
 Lab.3      Modifying and rewriting software
 Lab.4      C programming and debugging
