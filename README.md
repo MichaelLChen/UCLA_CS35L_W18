@@ -19,7 +19,13 @@ Lab.10     [Research and development in computing](http://web.cs.ucla.edu/classe
 ```
 1. 98/100
 2. 96/100  
-6. 100/100   
+3. 99/100  
+4. 93/100  
+5. 91/100  
+6. 100/100  
+7. 100/100  
+8. 100/100 
+9. 100/100  
 10. 99/100   
 ```
 [https://lawrencexu13467.github.io/UCLA_CS35L_W18/](https://lawrencexu13467.github.io/UCLA_CS35L_W18/)   
